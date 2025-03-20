@@ -19,15 +19,21 @@ def insertUser(username, password, DoB):
 
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
-    if username == password:
-     print("They can't be the same")
-    else:
-        cur.execute(
+    sqlQ = "SELECT * FROM users WHERE username = ?"
+    cur.execute(sqlQ,(username,)) #now it leaves login as just as
+    if cur.fetchone() == None:
+        if username == password: #only messages inside the console,need to add prompt to user
+         print("They can't be the same")
+        else:
+         cur.execute(
         "INSERT INTO users (username,password,dateOfBirth) VALUES (?,?,?)",
         (username, hash_password, DoB),
-    )
-    con.commit()
-    con.close()
+        )
+        con.commit()
+        con.close()
+    else:
+     print("username aleady exists")
+
     
 
 def retrieveUsers(username, password):
@@ -41,12 +47,14 @@ def retrieveUsers(username, password):
     if cur.fetchone() == None: 
         con.close()
         return False
+
+
     else:
         cur.execute(sqlQ,(password,))
         #cur.execute(f"SELECT * FROM users WHERE password = '{password}'")  original line
         # Plain text log of visitor count as requested by Unsecure PWA management
         savedpassword = cur.fetchone()
-        print(savedpassword)
+        print('this is the hashed version of password')
         with open("visitor_log.txt", "r") as file:
             number = int(file.read().strip())
             number += 1
@@ -63,7 +71,6 @@ def retrieveUsers(username, password):
         else:
             con.close()
             return True
-
 
 def insertFeedback(feedback):
     con = sql.connect("database_files/database.db")

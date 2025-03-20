@@ -17,12 +17,17 @@ def insertUser(username, password, DoB):
 def retrieveUsers(username, password):
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
-    cur.execute(f"SELECT * FROM users WHERE username = '{username}'")
-    if cur.fetchone() == None:
+    
+    sqlQ = "SELECT * FROM users WHERE username = ?"
+    #cur.execute(f"SELECT * FROM users WHERE username = '{username}'") original string
+    #cur.execute(sql, "SELECT * From ? WHERE ?  )
+    cur.execute(sqlQ,(username,)) #now it leaves login as just as
+    if cur.fetchone() == None: 
         con.close()
         return False
     else:
-        cur.execute(f"SELECT * FROM users WHERE password = '{password}'")
+        cur.execute(sqlQ,(password,))
+        #cur.execute(f"SELECT * FROM users WHERE password = '{password}'")  original line
         # Plain text log of visitor count as requested by Unsecure PWA management
         with open("visitor_log.txt", "r") as file:
             number = int(file.read().strip())
@@ -42,7 +47,8 @@ def retrieveUsers(username, password):
 def insertFeedback(feedback):
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
-    cur.execute(f"INSERT INTO feedback (feedback) VALUES ('{feedback}')")
+    #cur.execute("INSERT INTO FEEDBACK (feedback) VALUES ('{feedback}')") #original string
+    cur.execute("INSERT INTO feedback ({feedback}) VALUES ('?, ?')") 
     con.commit()
     con.close()
 
@@ -50,7 +56,7 @@ def insertFeedback(feedback):
 def listFeedback():
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
-    data = cur.execute("SELECT * FROM feedback").fetchall()
+    data = cur.execute("SELECT * FROM feedback").fetchall() #original line
     con.close()
     f = open("templates/partials/success_feedback.html", "w")
     for row in data:

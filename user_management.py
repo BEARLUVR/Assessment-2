@@ -19,7 +19,10 @@ def insertUser(username, password, DoB):
 
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
-    cur.execute(
+    if username == password:
+     print("They can't be the same")
+    else:
+        cur.execute(
         "INSERT INTO users (username,password,dateOfBirth) VALUES (?,?,?)",
         (username, hash_password, DoB),
     )

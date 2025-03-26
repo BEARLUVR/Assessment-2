@@ -6,10 +6,16 @@
         <input type="text" name="username" placeholder="Username" class="input__field">
     </div>            
     <div class="input__wrapper">
-        <input type="password" name="password" placeholder="Password" class="input__field">
+    <label for="pwd">Password:</label>
+    
+    <input type="password" id="pwd" name="pwd"
+    placeholder="Password"
+    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+    title="Must contain at least one  number and one uppercase and lowercase letter, and at least 8 or more characters">
+    <input type="submit">
     </div>
     <div class="input__wrapper">
-        <input type="dateOfBirth" name="dob" placeholder="Date of Birth" class="input__field">
+    <input type="dateOfBirth" name="dob" placeholder="Date of Birth" class="input__field">
     </div>
     <div class="input__wrapper">
         <button type="submit" class="btn">Submit</button>

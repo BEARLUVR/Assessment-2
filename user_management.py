@@ -2,6 +2,7 @@ import sqlite3 as sql
 import time
 import random
 import bcrypt
+import html
 
   #
   #  cur = con.cursor()
@@ -13,22 +14,23 @@ import bcrypt
 
 def insertUser(username, password, DoB):
     #convcerts to byte version of password
-    byte_password = password.encode('utf-8')
+    sanitised_username = html.escape(username)
+    sanitised_password = html.escape(password)
+    byte_password = sanitised_password.encode('utf-8')
     #hashes byte versionsS
     hash_password = bcrypt.hashpw(byte_password, bcrypt.gensalt())
 
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
     sqlQ = "SELECT * FROM users WHERE username = ?"
-    cur.execute(sqlQ,(username,)) #now it leaves login as just as
+    cur.execute(sqlQ,(sanitised_username,)) #now it leaves login as just as
     if cur.fetchone() == None:
-        if username == password: #only messages inside the console,need to add prompt to user
+        if sanitised_username == password: #only messages inside the console,need to add prompt to user
          print("They can't be the same")
         else:
          cur.execute(
         "INSERT INTO users (username,password,dateOfBirth) VALUES (?,?,?)",
-        (username, hash_password, DoB),
-        )
+        (sanitised_username, hash_password, DoB),)
         con.commit()
         con.close()
     else:
@@ -73,11 +75,12 @@ def retrieveUsers(username, password):
             return True
 
 def insertFeedback(feedback):
+    sanitised_input  = html.escape(feedback)
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
     #cur.execute("INSERT INTO FEEDBACK (feedback) VALUES ('{feedback}')") #original string
     sqlQ =  ("INSERT INTO feedback (?) VALUES ('{?}')")
-    cur.execute(sqlQ,(feedback,))
+    cur.execute(sqlQ,(sanitised_input,))
     con.commit()
     con.close()
 

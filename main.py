@@ -3,12 +3,16 @@ from flask import render_template
 from flask import request
 from flask import redirect
 import user_management as dbHandler
-import html
+#import html  
+from flask  import session
+from datetime import timedelta
 
 # Code snippet for logging a message
 # app.logger.critical("message")
 
 app = Flask(__name__)
+app.secret_key = "JIN KAZAMA"
+app.permanent_session_lifetime = timedelta(minutes=30)
 
 @app.route("/success.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
 def addFeedback():
@@ -21,8 +25,11 @@ def addFeedback():
         dbHandler.listFeedback()
         return render_template("/success.html", state=True, value="Back")
     else:
-        dbHandler.listFeedback()
-        return render_template("/success.html", state=True, value="Back")
+        if "user" in session:
+         dbHandler.listFeedback()
+         return render_template("/success.html", state=True, value="Back")
+        else:
+            return render_template("/index.html")
 
 
 @app.route("/signup.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
@@ -51,6 +58,8 @@ def home():
         password = request.form["password"]
         isLoggedIn = dbHandler.retrieveUsers(username, password)
         if isLoggedIn:
+            session["user"] = username #race condition- starts a session
+            session.permanent = True
             dbHandler.listFeedback()
             return render_template("/success.html", value=username, state=isLoggedIn)
         else:

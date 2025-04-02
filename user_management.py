@@ -51,7 +51,9 @@ def retrieveUsers(username, password):
         return False
 
 
+    
     else:
+        sqlQ = "SELECT * FROM users WHERE password = ?"
         cur.execute(sqlQ,(password,))
         #cur.execute(f"SELECT * FROM users WHERE password = '{password}'")  original line
         # Plain text log of visitor count as requested by Unsecure PWA management

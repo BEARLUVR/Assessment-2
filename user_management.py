@@ -2,6 +2,7 @@ import sqlite3 as sql
 import time
 import random
 import bcrypt
+import html
 
   #
   #  cur = con.cursor()
@@ -13,18 +14,28 @@ import bcrypt
 
 def insertUser(username, password, DoB):
     #convcerts to byte version of password
-    byte_password = password.encode('utf-8')
+    sanitised_username = html.escape(username)
+    sanitised_password = html.escape(password)
+    byte_password = sanitised_password.encode('utf-8')
     #hashes byte versionsS
     hash_password = bcrypt.hashpw(byte_password, bcrypt.gensalt())
 
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
-    cur.execute(
+    sqlQ = "SELECT * FROM users WHERE username = ?"
+    cur.execute(sqlQ,(sanitised_username,)) #now it leaves login as just as
+    if cur.fetchone() == None:
+        if sanitised_username == password: #only messages inside the console,need to add prompt to user
+         print("They can't be the same")
+        else:
+         cur.execute(
         "INSERT INTO users (username,password,dateOfBirth) VALUES (?,?,?)",
-        (username, hash_password, DoB),
-    )
-    con.commit()
-    con.close()
+        (sanitised_username, hash_password, DoB),)
+        con.commit()
+        con.close()
+    else:
+     print("username aleady exists")
+
     
 
 def retrieveUsers(username, password):
@@ -38,12 +49,14 @@ def retrieveUsers(username, password):
     if cur.fetchone() == None: 
         con.close()
         return False
+
+
     else:
         cur.execute(sqlQ,(password,))
         #cur.execute(f"SELECT * FROM users WHERE password = '{password}'")  original line
         # Plain text log of visitor count as requested by Unsecure PWA management
         savedpassword = cur.fetchone()
-        print(savedpassword)
+        print('this is the hashed version of password')
         with open("visitor_log.txt", "r") as file:
             number = int(file.read().strip())
             number += 1
@@ -61,13 +74,13 @@ def retrieveUsers(username, password):
             con.close()
             return True
 
-
 def insertFeedback(feedback):
+    sanitised_input  = html.escape(feedback)
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
     #cur.execute("INSERT INTO FEEDBACK (feedback) VALUES ('{feedback}')") #original string
     sqlQ =  ("INSERT INTO feedback (?) VALUES ('{?}')")
-    cur.execute(sqlQ,(feedback,))
+    cur.execute(sqlQ,(sanitised_input,))
     con.commit()
     con.close()
 

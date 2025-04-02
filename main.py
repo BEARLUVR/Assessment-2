@@ -3,6 +3,7 @@ from flask import render_template
 from flask import request
 from flask import redirect
 import user_management as dbHandler
+import html
 
 # Code snippet for logging a message
 # app.logger.critical("message")
@@ -56,6 +57,16 @@ def home():
             return render_template("/index.html")
     else:
         return render_template("/index.html")
+
+@app.route('/add.html', methods=['POST', 'GET'])
+def add():
+    if request.method=='POST':
+        email = request.form['email']
+        name = request.form['name']
+        dbHandler.insertContact(email,name)
+        return render_template('/add.html', is_done=True)
+    else:
+        return render_template('/add.html')
 
 
 if __name__ == "__main__":

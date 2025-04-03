@@ -51,8 +51,10 @@ def retrieveUsers(username, password):
         return False
 
 
+    
     else:
-        cur.execute(sqlQ,(password,))
+        sqlQ = "SELECT password FROM users WHERE username = ?"
+        cur.execute(sqlQ,(username,))
         #cur.execute(f"SELECT * FROM users WHERE password = '{password}'")  original line
         # Plain text log of visitor count as requested by Unsecure PWA management
         savedpassword = cur.fetchone()
@@ -67,12 +69,12 @@ def retrieveUsers(username, password):
         byte_password = password.encode('utf-8')
         if bcrypt.checkpw(byte_password, savedpassword[0]):
         
-         if cur.fetchone() == None:
-            con.close()
-            return False
-        else:
+         #if cur.fetchone() == None:
             con.close()
             return True
+        else:
+            con.close()
+            return False
 
 def insertFeedback(feedback):
     sanitised_input  = html.escape(feedback)

@@ -2,23 +2,21 @@
 {% block content %}
 <h1>Signup Form</h1>
 <form action="/signup.html" method="POST" class="box">
-    <div class="input__wrapper">
-        <input type="text" name="username" placeholder="Username" class="input__field">
-    </div>            
-    <div class="input__wrapper">
-    <label for="pwd">Password:</label>
-    
-    <input type="password" id="pwd" name="pwd"
-    placeholder="Password"
-    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-    title="Must contain at least one  number and one uppercase and lowercase letter, and at least 8 or more characters">
-    <input type="submit">
-    </div>
-    <div class="input__wrapper">
-    <input type="dateOfBirth" name="dob" placeholder="Date of Birth" class="input__field">
-    </div>
-    <div class="input__wrapper">
-        <button type="submit" class="btn">Submit</button>
-    </div>
+<div class="input__wrapper">
+<input type="text" name="username" placeholder="Username" class="input__field">
+</div>
+<div class="input__wrapper"> <!fixed tis input field up, name needs to be password not pw>
+<input type="password" name="password"
+placeholder="Password"
+pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+class="input__field">
+</div>
+<div class="input__wrapper">
+<input type="dateOfBirth" name="dob" placeholder="Date of Birth" class="input__field">
+</div>
+<div class="input__wrapper">
+<button type="submit" class="btn">Submit</button>
+</div>
 </form>
 {% endblock %}
